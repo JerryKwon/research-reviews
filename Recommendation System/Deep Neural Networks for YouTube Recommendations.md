@@ -49,7 +49,7 @@ candidate를 하는 이유는 추천의 대상은 엄청 크지만 사용자에�
 
 
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?P(w_t =i|U,C)={e^{v_{i}u}}/{\sum_{j\in{V}}e^{v_j{u}}}" title="P(w_t =i|U,C)={e^{v_{i}u}}/{\sum_{j\in{V}}e^{v_j{u}}}" />
+<img align="center" src="https://latex.codecogs.com/svg.latex?P(w_t=i|U,C)={e^{v_{i}u}}/{\sum_{j\in{V}}e^{v_j{u}}}" title="P(w_t=i|U,C)={e^{v_{i}u}}/{\sum_{j\in{V}}e^{v_j{u}}}" />
 
 사용자 U와 Context C에 대하여 t시점에 i 영상을 보는 확률은, 사용자가 모든 영상을 감상하는 것 중에 해당 영상을 모두 시청하는 것을 나타내는 확률인 softmax 함수로 도출된다.
 
@@ -148,6 +148,6 @@ Ranking Model을 통해 예측하고자하는 값은 'expected watch time'이다
 
 Positive Impression과 Negative Impression에 의해 다른 가중치를 받게 된다.
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?Weight=\sum T_i / N-k" title="Weight=\sum T_i / N-k" />
+<img align="center" src="https://latex.codecogs.com/svg.latex?Weight=\sum{T_i}/{N-k}" title="Weight=\sum{T_i}/{N-k}" />
 
 N: the number of traning sample, k: the number of positive impressions, $T_i$: watch time of the ith impression
