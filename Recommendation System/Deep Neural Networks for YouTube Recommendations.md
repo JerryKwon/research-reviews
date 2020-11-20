@@ -2,7 +2,13 @@
 
 논문: https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf
 
-참고자료: https://yamalab.tistory.com/124?category=747907
+참고자료
+
+https://yamalab.tistory.com/124?category=747907
+
+http://keunwoochoi.blogspot.com/2016/09/deep-neural-networks-for-youtube.html
+
+https://www.youtube.com/watch?v=V6zixdCIOqw
 
 ## 주요 도전과제
 
@@ -41,7 +47,7 @@ candidate를 하는 이유는 추천의 대상은 엄청 크지만 사용자에�
 
 해당 논문에서는 Recommendation의 문제 정의를 highly extreme muti-class classification으로 정의합니다.
 
-$P(w_t =i|U,C)={e^{v_{i}u}}/{\sum_{j\in{V}}e^{v_j{u}}}$
+$$P(w_t =i|U,C)={e^{v_{i}u}}/{\sum_{j\in{V}}e^{v_j{u}}}$$
 
 사용자 U와 Context C에 대하여 t시점에 i 영상을 보는 확률은, 사용자가 모든 영상을 감상하는 것 중에 해당 영상을 모두 시청하는 것을 나타내는 확률인 softmax 함수로 도출된다.
 
@@ -70,10 +76,59 @@ Generation Model에서 input으로 수백의 video들에 대한 vector가 input�
 
 
 #### Model Architecture
-<div align="center">
+<div align="center">yot
 <img src="imgs/DNN_for_Youtube_Recommendation_Gen_Model_architecture.jpg" />
 </div>
 
+
 Model에서는 추천을 위해 시청기록, 검색기록, 사용자 정보(나이, 성별, 거주지 등등), 영상 정보를 input으로 하여 여러개의 은닉층으로 구성된 DNN을 사용한다.
 
-시청기록과 검색기록은 각 기록들에 대해서 Video ID와 검색 string을 Embedding한 결과를 Average하여 사용한다. 여기서 Average를 적용하는 이유는 가장 최근에 시청한 영상과 검색한 기록에 의존적으로 Model이 추천하지 않도록 하기 위함이다. 이를 통해 시간적이거나 sequence 적인 정보는 희석된다.
+시청기록과 검색기록은 각 기록들에 대해서 Video ID와 검색 string을 Embedding한 결과를 Average하여 사용한다. 여기서 Average를 적용하는 이유는 가장 최근에 시청한 영상과 검색한 기록에 의존적으로 Model이 추천하지 않도록 하기 위함이다(e.g. Talyor Swift). 이를 통해 시간적이거나 sequence 적인 정보는 희석된다.
+
+영상에 대한 정보는 Youtube에서 재생되는 영상 뿐 아니라 웹페이지에 import되어 재생되는 영상을 모두 포함했다. 이는 이미 Youtube에서 재생된 영상들은 기존 시스템의 영향을 받을 수 있기 때문이다. 
+
+그리고, 각 사용자에 대한 영상 시청 정보는 일정 개수를 제한하여 샘플링하였다. 왜냐하면 특정 사용자가 특정 시점에 많은 양의 영상을 시청할 수 있기 때문이다. 
+
+<div align="center">
+<img src="imgs/DNN_for_Youtube_Recommendation_sampling_videos.jpg" />
+</div>
+그리고 video에 대해서 video_id나 search history를 샘플링하는데 있어서 (b)의 그림과 같이 과거의 history를 담을 수 있도록 샘플링하였다[<-> 일반적인 collaborative filitering문제가 random하게 샘플링하는것 에 비해(a)]. 이는 일반적인 영상 소비 패턴의 경우 t-1과 t-2에 소비한 영상은 서로 연관성이 높지만, 특정 Youtuber 및 가수의 영상등을 시청하는 경우 선후관계에 연관성이 높을 것이기 때문이다.
+
+그리고 영상과 관련된 정보외에도 사용자의 정보를 input vector로 활용한다. 이 값들은 모두 0에서 1사이로 정규화된 값으로 투입된다. 
+
+* Example age ($t_{max} - t_N$ in Figure 5.)
+
+  : 신규 영상일 수록 영상에 대한 수요가 높다. 여러 feature를 input vector에 투입해본 결과 해당 feature가 이 특징을 잘 반영하여 추천을 진행했다.
+
+## Ranking Model
+
+<div align="center">
+<img src="imgs/DNN_for_Youtube_Recommendation_Rank_Model_architecture.jpg" />
+</div>
+Ranking Model은 Candidate Generation Model을 활용해 생성한 후보군들을 사용자의 감정데이터를 활용하여 user interface에 맞게 추려주는 역할을 하는 모델이다. Ranking Model에서는 Weighted Logistic Regression을 활용하여 video들에 대한 개별적인 score를 할당한다. 따라서 이 스코어를 기준으로 정렬하여 인터페이스에 맞는 top n개의 video를 추천하는 것이다.
+
+ranking에 대한 objective fucntion에서는 CTR(Click-Through Rate)를 사용하지 않고 시청한 시간을 활용하였다. 왜냐하면, CTR의 경우에는 유저가 원치 않는 광고성 video가 포함될 수 있기 때문에 더 확실한 시청 시간을 기준으로 function을 구축하였다.
+
+* categorical features: 대부분 기수성이 높은 데이터들이지만, binary 성 데이터도 있음.
+* continuous / oridinal features 
+* univalent / multivalent: uni. impresson이 측정된 Video_id, multi. 사용자가 시정한 Video_id
+
+#### Feature Enginnering
+
+가장 중요했던 feature는 다른 유사한 video에서 보였던 사용자의 상호작용이었다.
+
+e.g. 특정 채널에서 얼마나 많은 영상을 보았는지? 해당 토픽의 영상을 마지막으로 본 시점이 언제인지?...
+
+그리고 candidate model에서 넘어온 candidate video의 점수 또한 중요하게 작용했다.
+
+마지막으로 특정 사용자에게 추천된 영상을 보지 않는 경우에는 해당 영상의 우선순위를 강등하는 방식을 도입했다.
+
+#### Modeling Expected Watch Time
+
+Ranking Model을 통해 예측하고자하는 값은 'expected watch time'이다. 이를 위해서 앞서 언급한 weighted logistic regression을 활용한다. Model은 Cross Entrophy Loss를 활용하여 Logistic Regression을 수행한다.
+
+Positive Impression과 Negative Impression에 의해 다른 가중치를 받게 된다.
+
+$Weight=\sum T_i / N-k$
+
+N: the number of traning sample, k: the number of positive impressions, $T_i$: watch time of the ith impression
