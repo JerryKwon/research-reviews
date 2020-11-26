@@ -41,8 +41,9 @@ Word Phrase를 이용한 방식은 상대적으로 간단하며, data 특성에 
 Skip-gram의 objective는 단어나 문서에서 주변의 단어를 예측하는데 유용한 word representation을 찾는것이다. 다시 말하지면 $w_1,w_2,w_3,...,w_T$의 연속적인 단어를 학습하는 경우 Skip-gram model의 목적은 'average log probability'를 극대화 하는 것이다.
 
 <div align="center">
-<img src="https://latex.codecogs.com/svg.latex?\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum}log\p(w_{t+j}|w_t)" title="\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum} log\ p(w_{t+j}|w_t)" />
+<img src="https://latex.codecogs.com/svg.latex?\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum}logp(w_{t+j}|w_t)" title="\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum} log\ p(w_{t+j}|w_t)" />
 </div>
+
 
 c는 training context의 size를 말하며, 크기가 클수록 많은 예제들이 학습에 사용되고 높은 정확도를 보이지만, 학습에 많은 시간이 소요된다.
 
