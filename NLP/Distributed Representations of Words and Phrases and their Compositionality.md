@@ -40,11 +40,15 @@ Word Phrase를 이용한 방식은 상대적으로 간단하며, data 특성에 
 
 Skip-gram의 objective는 단어나 문서에서 주변의 단어를 예측하는데 유용한 word representation을 찾는것이다. 다시 말하지면 $w_1,w_2,w_3,...,w_T$의 연속적인 단어를 학습하는 경우 Skip-gram model의 목적은 'average log probability'를 극대화 하는 것이다.
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum} log\ p(w_{t+j}|w_t)" title="\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum} log\ p(w_{t+j}|w_t)" />
+<div align="center">
+<img src="https://latex.codecogs.com/svg.latex?\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum}log\p(w_{t+j}|w_t)" title="\frac1{T}\overset{T}{\underset{t=1}{\sum}}\underset{-c\leq{j}\leq{c},j\neq{0}}{\sum} log\ p(w_{t+j}|w_t)" />
+</div>
 
 c는 training context의 size를 말하며, 크기가 클수록 많은 예제들이 학습에 사용되고 높은 정확도를 보이지만, 학습에 많은 시간이 소요된다.
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?p(w_O|w_I)=\frac{exp(v^{\prime}_{w_O}\top_{v_{w_{I}})}}{\sum^W_{w=1}exp(v^{\prime}_{w}\top_{v_{w_{I}})}}" title="p(w_O|w_I)=\frac{exp(v^{\prime}_{w_O}\top_{v_{w_{I}})}}{\sum^W_{w=1}exp(v^{\prime}_{w}\top_{v_{w_{I}})}}" />
+<div align="center">
+<img src="https://latex.codecogs.com/svg.latex?p(w_O|w_I)=\frac{exp(v^{\prime}_{w_O}\top_{v_{w_{I}})}}{\sum^W_{w=1}exp(v^{\prime}_{w}\top_{v_{w_{I}})}}" title="p(w_O|w_I)=\frac{exp(v^{\prime}_{w_O}\top_{v_{w_{I}})}}{\sum^W_{w=1}exp(v^{\prime}_{w}\top_{v_{w_{I}})}}" />
+</div>
 
 $v_w$ and $v^\prime_w$은 입력 및 출력의 vector 표현값이며, W는 단어의 개수를 의미한다.
 
@@ -56,7 +60,9 @@ Hierarchical Softmax는 output layer에 W개이 단어 수 만큼 leaf가 존재
 
 다시 말하자면, 각각의 단어 w는 root에서부터 적절한 경로들이있다. $n(w,j)$ 이를 root에서 w로 향하는데 있어서 j번째 node라고 나타내고, $L(w)$는 경로의 길이를 나타내고, $n(w,1)$=root,  $n(w,L(w))=w$ 이다. $ch(n)$을 n 노드의 child라고 한다면, $[x]$를 x가 true이면 1, 아니면 -1이라고 하고 아래의 식을 살펴보자.
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?p(w|w_I)=\overset{L(w)-1}{\underset{j=1}{\prod}}\sigma(n[n(w,j+1)=ch(n(w,j))]*v^\prime_{n(w,j)}\top_{v_{w_{I}})})" title="p(w|w_I)=\overset{L(w)-1}{\underset{j=1}{\prod}}\sigma(n[n(w,j+1)=ch(n(w,j))]*v^\prime_{n(w,j)}\top_{v_{w_{I}})})" />
+<div align="center">
+<img src="https://latex.codecogs.com/svg.latex?p(w|w_I)=\overset{L(w)-1}{\underset{j=1}{\prod}}\sigma(n[n(w,j+1)=ch(n(w,j))]*v^\prime_{n(w,j)}\top_{v_{w_{I}})})" title="p(w|w_I)=\overset{L(w)-1}{\underset{j=1}{\prod}}\sigma(n[n(w,j+1)=ch(n(w,j))]*v^\prime_{n(w,j)}\top_{v_{w_{I}})})" />
+</div>
 
 $\sigma(x)=1/(1+exp(-x))$이고, $\sum^W_{w=1}p(w|w_I)=1$이다. 이로 인해 $log\ p(w_O|w_I)$와$\triangledown{log\ p(W_O|W_I)}$의 cost 계산은 평균이 $log W$보다 크거나 같지 않은 $L(w_O)$의 비율로 나타낼 수 있다. 기본 Skip-gram 방식의 softmax 식과 달리 $v_w$와 $v^\prime_w$이 w로 매핑되었고 각각의 단어 w에 대해 $v_w$는 한번만 나타나고, 이진트리의 모든 내부노드 n에 대해 $v^\prime_n$이 한 번 나타난다.
 
@@ -68,7 +74,9 @@ hierarchical softmax의 대안은 Noise Contrastive Estimation(NCE)이다. NCE�
 
 NCE가 softmax의 log probabiliy 최대화 값을 추정하는데 보이는 반면, Skip-gram은 벡터 표현에 있어서 높은 quality를 지향하는 것만 고려하여 학습한다. 그래서 NCE를 벡터 표현시 quailty만을 추구하게 끔 간단화 하는것을 Negative Sampling(NEG)라고 정의한다. NEG의 objective는 Skip-gram에서 모든 $log\ P(w_O|w_I)$의 식을 바꾸는 것이다.   
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?log\ \sigma(v^\prime_{w_O}\top_{v_{w_{I}}})+\overset{k}{\underset{i=1}{\sum}}E_{{w_i}\sim{P_n(w)}}[log \sigma(-v^\prime_{w_i}\top_{w_{w_{I}}})]" title="log\ \sigma(v^\prime_{w_O}\top_{v_{w_{I}}})+\overset{k}{\underset{i=1}{\sum}}E_{{w_i}\sim{P_n(w)}}[log \sigma(-v^\prime_{w_i}\top_{w_{w_{I}}})]" />
+<div align="center">
+<img align="center" src="https://latex.codecogs.com/svg.latex?log\sigma(v^\prime_{w_O}\top_{v_{w_{I}}})+\overset{k}{\underset{i=1}{\sum}}E_{{w_i}\sim{P_n(w)}}[log\sigma(-v^\prime_{w_i}\top_{w_{w_{I}}})]" title="log\ \sigma(v^\prime_{w_O}\top_{v_{w_{I}}})+\overset{k}{\underset{i=1}{\sum}}E_{{w_i}\sim{P_n(w)}}[log \sigma(-v^\prime_{w_i}\top_{w_{w_{I}}})]" />
+</div>
 
 따라서, 이는 각 데이터 샘플에서 k개의 negative sample이 있는 noise distribution $P_n(W)$에서 logistic regression을 사용하여 목표 단어 $W_O$를 구분하는 것이다. k는 작은 데이터셋에서는 5~20을 지정하고 큰 데이터셋에서는 2~5로 값을 설정한다. NEG와 NCE의 주된 차이점은 NCE는 샘플과 numerical probabilities의 noise distribution을 필요로 하는 반면에 NEG는 샘플의 noise distribution만을 필요로 하기 때문이다. 
 
@@ -78,7 +86,9 @@ NCE가 softmax의 log probabiliy 최대화 값을 추정하는데 보이는 반�
 
 적게 등장하고 많이 등장하는 단어 간의 불균형을 세기 위해, 간단한 subsampling 방식을 활용한다.
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?P(w_i) = 1-\sqrt{\frac{t}{f(w_i)}" title="P(w_i) = 1-\sqrt{\frac{t}{f(w_i)}" />
+<div align="center">
+<img align="center" src="https://latex.codecogs.com/svg.latex?P(w_i)=1-\sqrt{\frac{t}{f(w_i)}" title="P(w_i)=1-\sqrt{\frac{t}{f(w_i)}" />
+</div>
 
 $f(w_i)$는 단어 $w_i$이 빈도,  $t$는 선택된 시점.
 
@@ -95,8 +105,9 @@ $f(w_i)$는 단어 $w_i$이 빈도,  $t$는 선택된 시점.
 
 같이 등장하는 phrase를 찾기 위한 수식은 아래와 같다.
 
-<img align="center" src="https://latex.codecogs.com/svg.latex?score(w_i,w_j)=\frac{count(w_iw_j)-\delta}{count(w_i)\times{count(w_j)}}" title="score(w_i,w_j)=\frac{count(w_iw_j)-\delta}{count(w_i)\times{count(w_j)}}" />
-
+<div align="center">
+<img  src="https://latex.codecogs.com/svg.latex?score(w_i,w_j)=\frac{count(w_iw_j)-\delta}{count(w_i)\times{count(w_j)}}" title="score(w_i,w_j)=\frac{count(w_iw_j)-\delta}{count(w_i)\times{count(w_j)}}" />
+</div>
 
 
 <div align="center">
