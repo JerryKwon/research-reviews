@@ -18,11 +18,13 @@ https://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf
 
 * Packages
 
-  https://github.com/rixwew/pytorch-fm
+  https://github.com/rixwew/pytorch-fm 
 
   https://github.com/jmhessel/fmpytorch
 
   https://www.kaggle.com/gennadylaptev/factorization-machine-implemented-in-pytorch
+  
+  https://github.com/etlundquist/rankfm
 
 
 
