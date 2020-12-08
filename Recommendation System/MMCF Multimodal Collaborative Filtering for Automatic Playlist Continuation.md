@@ -44,7 +44,7 @@ AE(Autoencoder)는 비선형의 방식으로 데이터를 압축하여 표현하
 
 * Encoder
 
-    <img src="https://latex.codecogs.com/svg.latex?y=f(x)=\sigma(Wx+b),\ x\in[0,1]^n\ to\ y\in{R^d}" title="y=f(x)=\sigma(Wx+b),\ x\in[0,1]^n\ to\ y\in{R^d}" />
+    <img src="https://latex.codecogs.com/svg.latex?y=f(x)=\sigma(Wx+b),x\in[0,1]^n\ to\ y\in{R^d}" title="y=f(x)=\sigma(Wx+b),\ x\in[0,1]^n\ to\ y\in{R^d}"/>
 
 * Decoder
 
@@ -55,7 +55,7 @@ AE(Autoencoder)는 비선형의 방식으로 데이터를 압축하여 표현하
 
 ##### **loss function**
 
-<img src="https://latex.codecogs.com/svg.latex?\underset{\theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}(p,\hat{p}),\ \Theta=\{W,W^{\prime},b,b^{\prime}\}" title="\underset{\theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}(p,\hat{p}),\ \Theta=\{W,W^{\prime},b,b^{\prime}\}" />
+<img src="https://latex.codecogs.com/svg.latex?\underset{\theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}(p,\hat{p}),\, \Theta=\{W,W^{\prime},b,b^{\prime}\}" title="\underset{\theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}(p,\hat{p}),\ \Theta=\{W,W^{\prime},b,b^{\prime}\}" />
 
 <img src="https://latex.codecogs.com/svg.latex?\mathcal{L}(p,p^{\prime})=-\frac{1}{n}\overset{n}{\underset{i=1}{\sum}}p_i\ log\hat{p}_i+(1-p_i)log(1-\hat{p}_1)" title="\mathcal{L}(p,p^{\prime})=-\frac{1}{n}\overset{n}{\underset{i=1}{\sum}}p_i\ log\hat{p}_i+(1-p_i)log(1-\hat{p}_1)" />
 
@@ -67,13 +67,13 @@ CNN(convolutional neural network)는 이미지 및 영상 인식에서 많이 �
 
 CNN은 구조적으로 local feature 생성을 위한 convolution layer와 subsampling을 통해 정밀한 표현을 나타내는 pooling layer로 구성되어진다. 
 
-<img src="https://latex.codecogs.com/svg.latex?f_i=h(F\ *\ T_{i:\(i+s-1\)}+b)" title="f_i=h(F\ *\ T_{i:\(i+s-1\)}+b)"/>
+<img src="https://latex.codecogs.com/svg.latex?f_i=h(F*T_{i:\(i+s-1\)}+b)" title="f_i=h(F\ *\ T_{i:\(i+s-1\)}+b)"/>
 
 filter는 windows size s에 대해 ![formular](https://render.githubusercontent.com/render/math?math=F\in{R^{s\times{d}}})로 표현할 수 있다. 그리고, 텍스트 T의 순서에 convolutional 하게 모델을 나타낼 수 있다.
 
 ![formular](https://render.githubusercontent.com/render/math?math=T_{i:\(i+s-1\)})는 i부터 i+s-1까지의 subsequence이고, b는 F의 bias이다. h는 활성화 함수이다.
 
-<img src="https://latex.codecogs.com/svg.latex?f\ =\ [f_1;...;f_{t-s+1}]" title="f\ =\ [f_1;...;f_{t-s+1}]"/>
+<img src="https://latex.codecogs.com/svg.latex?f\, =\, [f_1;...;f_{t-s+1}]" title="f\ =\ [f_1;...;f_{t-s+1}]"/>
 
 small f는 Filter를 거쳐 얻은 feature vector이며, 1부터 t-s+1까지의 변수를 가진다.
 
@@ -118,11 +118,11 @@ where, ![formular](https://render.githubusercontent.com/render/math?math=\Theta=
 
     * Setting the artist as 0
 
-        <img src="https://latex.codecogs.com/svg.latex?\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([\tilde{p};0])))" title="\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([\tilde{p};0])))"/>
+        <img src="https://latex.codecogs.com/svg.latex?\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p],\, g(f([\tilde{p};0])))" title="\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([\tilde{p};0])))"/>
 
     * Setting the playlist as 0
 
-        <img src="https://latex.codecogs.com/svg.latex?\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([0;\tilde{a}_p])))" title="\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([0;\tilde{a}_p])))"/>
+        <img src="https://latex.codecogs.com/svg.latex?\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p],\, g(f([0;\tilde{a}_p])))" title="\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([0;\tilde{a}_p])))"/>
 
     'hide-and-seek'아이디어는 두가지 효과가 있다.
 
@@ -140,14 +140,14 @@ where, ![formular](https://render.githubusercontent.com/render/math?math=\Theta=
 
 마지막으로는 특정 playlist에 특정 track이 있는지 없는지를 구분하는 문제가 되며, 이는 'one-class collaborative filtering' problem(**observed** or **missing**)이다. 이를 위해 loss function으로 uniform weighted scheme를 사용한다.
 
-<img src="https://latex.codecogs.com/svg.latex?\mathcal{L}(p,\hat{p})=-\frac{1}{n}\underset{p\in{P}}{\sum}p_i\ log\hat{p}_i+\alpha(1-p_i)log(1-\hat{p}_i)" title="\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([0;\tilde{a}_p])))"/>
+<img src="https://latex.codecogs.com/svg.latex?\mathcal{L}(p,\hat{p})=-\frac{1}{n}\underset{p\in{P}}{\sum}p_i\, log\hat{p}_i+\alpha(1-p_i)log(1-\hat{p}_i)" title="\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p], g(f([0;\tilde{a}_p])))"/>
 
 ### 3.2.CharCNN for Playlist Titles
 CNN의 단위를 Character 단위로 하게된 이유
 1. playlist title을 단어 단위로 하게 되면, out-of-dict 문제를 대처할 수 있다
 2. charCNN이 RNN보다 텍스트의 지역적인 특성을 포착하는데 더 용이하다.
 
-<img src="https://latex.codecogs.com/svg.latex?[\hat{p};\hat{a}_p] = charCNN(\Phi,T_p)" title="[\hat{p};\hat{a}_p] = charCNN(\Phi,T_p)"/>
+<img src="https://latex.codecogs.com/svg.latex?[\hat{p};\hat{a}_p]\, =\, charCNN(\Phi,T_p)" title="[\hat{p};\hat{a}_p] = charCNN(\Phi,T_p)"/>
 
 <img src="https://latex.codecogs.com/svg.latex?\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p],[\hat{p};\hat{a}_p])" title="\underset{\Theta}{argmin}\underset{p\in{P}}{\sum}\mathcal{L}([p;a_p],[\hat{p};\hat{a}_p])"/>
 
