@@ -78,5 +78,13 @@ B(t)는 처음부터 t-1시점까지 수행한 action의 context vector들의 �
 
 error가 $\eta_i(t):=r_i(t)-E(r_i(t)|b_i(t)) = r_i(t)-b_i(t)^T\mu$를 따르는 것과 같은 추가적인 제약을 통해 U_i(t)는 모든 i와 모든 t에 대하여 $b_i(t)^T\mu$의 $(1-\delta)$-probability upper bound 이다. 관측된 보상의 $\eta_{\alpha(\tau)}(\tau)$ error가 서로 관계가 있기 때문에 tight alpha값을 얻어내기 위해 'concentration inequality for vector-valued martingales' 방법을 활용했다. 추가적으로 적어도 $1-\delta$의 확률에서 UCB 알고리즘은 아래의 복잡도를 얻는다.
 
+$$
+R(T)\leq{O(d\sqrt{Tlong(T\delta)log(1+T/d)})}
+$$
 
 
+위의 수식은 log(T) 요인에 의한 무한한 N에 대해 계산을 했을때의 시간복잡도이며 이는 $\Omega(d\sqrt{T})$의 시간복잡도를 가지는 것과 매핑된다. 그리고 N을 유한한 개수로 제한하면 $\Omega(\sqrt{dT})$ $\sqrt{d}log(T)$ 아래에 시간복잡도를 가진다.
+
+UCB 알고리즘을 랜덤하게 시행한 알고리즘이 Bayeisan 기법을 기반으로한 heuristic방식의 Thompson sampling(TS)이다. 이는 사후확률을 기반으로 한 최적의 arm을 랜덤하게 당기는 알고리즘이다. t 시점의 $\mu$의 사후확률분포로부터 $\tilde{\mu}(t)$가 샘플링되고, 이를 기반으로 당기는 arm은 $a(t)=\underset{1\leq{i}\leq{N}}{argmax}b_i(t)^T\tilde{\mu}(t)$와 같이 나타낼 수 있다. 사후확률 $N(\hat{\mu}(t),v^2B(t)^{-1})$은 사전확률이 mu에 대해 $N(0_d,v^2I_d)$를 따름을 가정하면 쉽게 도출할 수 있으며, mu가 주어졌을 때 $r_i(t)$는 $N(b_i(t)^T\mu,v^2)$의 정규분포를 따른다.
+
+Linear contextual MAB들과 달리, adversarial contextual MAB(보상과 context vector간의 선형적인 가정이 필요 없는)는 임의의 함수를 따라야 하다는 제약이 없다. 그래서 r_i(t)에 대한 분포가 지속적으로 변화하고 이는 history에 따라서도 지속적으로 변화한다. r_i(t)의 값에 대한 임의의 적대적인 조정이 모델을 방해한다고 가정한다. 더 완화된 설정은 최적의 action에 대한 낮은 regret(t)를 얻는것을 힘들게 한다. 
