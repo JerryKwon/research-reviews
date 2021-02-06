@@ -92,7 +92,13 @@ let $\lambda=\epsilon$,
 
 !["L9_4"](imgs/L9_4.png)
 
-let $\delta=e^{-t\epsilon^2/2}$
+let $\delta=e^{-t\epsilon^2/2}$, we get with probability at least $1-\delta$ 
+
+reference
+
+<a href="https://math.stackexchange.com/questions/3119421/what-does-with-probability-1-delta-mean-in-optimization-theorems-for-algo">what probability at least $1-\delta$ means for</a>
+
+알고리즘에 불확실성이 있음을 내포한다는 것을 의미. $\delta$는 불확실성으로 인해 실패할 확률을 의미
 
 !["L9_5"](imgs/L9_5.png)
 
@@ -114,7 +120,7 @@ let $\delta=e^{-t\epsilon^2/2}$
 
     **각각의 arm이 과거의 선택에 독립적으로 선택된다고 하면, 이는 게임이 시작하기 전에 모든 arm들이 선택된다는 것을 의미한다.** 이는 이미 $\{x_i,y_i,\eta_i\}^t_{t=1}$과 같은 형태로 squence가 쌓여있음을 알 수 있다. 
 
-$Theta_*$를 추정하기 위해 least sqaure 방식의 Coefficient 추정식을 활용하면,
+$\Theta_*$를 추정하기 위해 least sqaure 방식의 Coefficient 추정식을 활용하면,
 
 !["L9_8"](imgs/L9_8.png)
 
@@ -145,3 +151,123 @@ $x_t$ depends on $\{x_i,t_i\}^{t-1}_{t=1}$
 우선 전개 수식 중 dependent한 경우에는 (1)의 등식은 성립할 수 없다. 왜냐하면 $w_i\eta_i$가 독립적이지 않기 때문이다. 
 
 그리고, (2) 수식에서는 수식이 dependence $\sqrt{d}$와 유사한 scale로 나타나야 하나 그러지 못하므로, 문제가 생긴다.
+
+# 3. Linear Bandits
+
+2011년의 linear bandit에 대한 paper를 중점적으로 다룬다. 이는 **self-normalized process이론**을 이용하여 증명된 **vector-valued martingale**으로 이상적인 **tail inequlity**를 통해 다른 arm간의 종속성을 다룸으로써 더 작은 신뢰구간을 추정할 수 있다. **tail inequlity는 self-normalized form과 stopped martingale이 가지는 성질로 인해 매 시간마다 일정하게 구간을 추정할 수 있다.** 이러한 일반성은 union bound를 거친 어느 편차 구간보다도 성능적인 향상을 이끌어 냈다. 마지막으로, 신뢰구간은 구간에서 오는 몇몇의 최악의 경우를 방지하는 방향으로 구성되었다. 
+
+Adventage compared with previous way.
+
+**(2nd paragraph, 2p of Abbasi et al. (2011))**
+* save log(n) factor by avoiding union bound way
+* 'more empiricial' because old bound replaced by emprical quantities always smaller.
+
+## 3.1. Main Result
+
+stochastic bandit은 linear bandit의 특수한 경우이다. 이 때문에 linear bandit을 위한 방법론들은 stochastic bandit에도 적용될 수 있다. 신뢰구간을 구성하는 방법론은 Auer et al. (2002)에서 수정하여 활용하였다. 
+
+modified UCB algorithm은 
+
+$1-\delta$의 확률로 $O(dlog(1/\delta)/\Delta)$의 regret을 가진다. 
+
+그리고, 이 UCB bound는 기존의 방법론(the seminal work of Lai and Robbins in [7])과 달리 n에 의존적이지 않음을 보인다. 그러나 $\delta$를 $\delta=1/n$으로 함으로써 기존에 제안된 UCB알고리즘의 regret bound인 $O(d\ logn/\Delta)$와 같은 결과를 갖는다. 
+
+그리고 해당 paper는 이전의 연구의 알고리즘인 'ConfidenceBall' 알고리즘에 비해 regret bound를
+
+$O(d\ log(n)\sqrt{nlog(n/\delta)})$ => $O(d\ log(n)\sqrt{n}+\sqrt{dnlog(n/\delta)})$로, 약 $\sqrt{log(n)}$만큼의 향상도를 보였다. 
+
+또한, regret of the problem **dependent** bound를 
+
+$O(\frac{d^2}{\Delta}log(n\delta)log^2(n))$ => $O(\frac{log(1/\delta)}{\Delta}(log(n)+d\ log\ logn)^2)$로 즐였다. 
+
+## 3.2. Algorithmic Approach
+
+t시점에 각 시점의 신뢰구간의 집합($C_{t-1}$)은 현재까지의 **(과거 arm의 선택과 관측된 보상값)** 을 가지고 현재 linear coff $\Theta_*$를 높은확률로 유지하도록 하는 것이 linear bandit의 주된 접근 법이다. t시점에 agent는 가장 최적의 estimate($\tilde{\Theta}_t=argmax_{\Theta\in{D_t}}<x,\Theta>$)를 도출하여 이를 가지고 보상을 최대로하는 arm($X_t=argmax_{x\in{D_t}}<x,\tilde{\Theta_t}>$)을 선택할 수 있도록 추정한다. 이를 간단히 나타내면 아래와 같은 수식으로 나타난다.  
+
+$(X_t, \tilde{\Theta_t})=\underset{(x,\Theta)\in{D_t\times{C_{t-1}}}}{argmax}<x,\Theta>$
+
+<div>
+<img src="imgs/L9_15.png">
+</div>
+
+순서
+1. strategy(estimate of coefficients per linear arms)에 따라 arm을 선택
+2. 선택에 따른 보상으로 round 종료 이전에 confidence set을 업데이트
+
+## 3.3. Self-Normalized Tail Inequailty for Vector-Valued martingales
+
+### 3.3.1. Prelimiaries
+
+https://seoncheolpark.github.io/book/_book/4-2-sigma-field.html
+
+https://bookdown.org/edeftg/machine_learning_with_rust/measuretheory.html
+
+https://www.youtube.com/watch?v=VYeY1ZpO6vg&t=903s
+
+https://www.youtube.com/watch?v=Zj4ZW3VtsFc&t=781s
+
+* $\sigma$-algebra (countable == sigma)
+
+    임의의 집합 X가 있다고 했을때, X의 비어있지 않은 부분집합을 $\mathcal{F}$라고 하자. 
+
+    만약 $\mathcal{F}$가 아래의 성질을 따른다면, 이는 시그마대수에 속한다고 말할 수 있다.
+
+    1. $X\ \in \mathcal{F}$
+    2. if $A\in{\mathcal{F}}$ then $A^c\in{\mathcal{F}}$, 즉 F의 여집합에 대해서도 닫혀있는 경우
+    3. if $\{A_n\}^\infty_{n=1}\subseteq{\mathcal{F}}$ then, $\overset{\infty}{\underset{n=1}{\cup}}A_n\in{\mathcal{F}}$, F의 구성 요소들의 합집합에 대해서도 닫혀있는 경우 => if finite union instead of infinity, it's called algebra
+
+    그래서, sigma-algebra에 속한 임의의 element를 'measureable set'이라고 한다. 
+
+
+* Measurable Function (가측함수)
+
+    If $\mathcal{F}$ is $\sigma$-algebra of X, $f:X\rightarrow{Y}$ is measurable function when $\forall{U}\in{y}$, $f^{-1}(U)\in{\mathcal{F}}$
+
+    예를들어, open set(U)의 inverse img는 measurable set이다. 
+
+    i.e. there is X -> Y -> Z sequence. and between variables there are function f and g. f is for X->Y and g is for Y->Z. and we define f: measureable function and g: continuous function.
+
+    then combined function seems like g\*f and we could call g\*f also could be measureable function.
+
+    $(g*f)^{-1}(U) = f^{-1}(g^{-1}(U))\in\mathcal{F}$
+
+    그런데, measurable -> continuous가 아니라 이 둘을 measurable function으로 통일하고 싶다. 이를 위해 continous function을 measurable function의 특수한 case로 정의(continuous -> Borel Measurable Function)하고자하는데 이때 사용되는 것이 'Borel sigma algebra'
+
+    Measurable Function could have propertiy of add and multiplication
+
+* Borel Sigma Algebra ($m^*=\underset{y\subseteq{m}}{\cap}m$)
+
+    토폴로지를 포함하는 가장 작은 sigma-algebra. Borel Sigma Algebra의 element를 Borel set이라고 한다. 
+
+    1. 모든 open set은 borel set.
+    2. 모든 closed set 또한 borel set.
+    3. $\overset{\infty}{\underset{n=1}{\cap}U_n}, \overset{\infty}{\underset{n=1}{\cup}F_n}$: 또한 Borel set {Countable intersection of openset / Counterable union of closed set}
+
+* Filtration
+
+    sigma 대수의 집합인 $\mathcal{F}_t$는 $t_1\leq{t_2}$에 대해 $\mathcal{F_{t_1}}\subset\mathcal{F_{t_2}}$ 인 경우에 filtration이라고 한다. stochastic process로 매 시점 t에 얻는 arm selection vector $\{X_t\}$들은 $\{\mathcal{F}_t\}$에 대해 filtration이 적용되어 있다고 할 수 있다. 
+
+* Martingale
+
+    stochastic process filtration$\{\mathcal{F}_t\}$이 적용된 $\{X_t\}$은 아래의 경우에 martingale이라고 할 수 있다.
+
+    1. $E[|X_t|] < \infty\ \forall{t}$
+    2. $E[X_t|\mathcal{F}_s]=X_s\ \forall{s}<t$
+
+
+### 3.2.2. Assumptions
+
+* Decision Set $\{D_t\}^\infty_{t=1}$이 임의적으로 결정된다고 가정하면, 선택되는 action의 순서 또한 임의적으로 선택된다. 이는 확률적인 의존성으로 인해 추후 일반화를 위한 식 전개시 제거 한다.
+
+* sigma-algebra $\mathcal{F}_t=\sigma(X_1,X-2,...,X_{t+1}, \eta_1, \eta_2,...,\eta_t)$에 대해서 Xt는 F{t-1}에 measurable하고, eta_t는 Ft에 measurable하다. 이를 가지고 t>=1인 모든 시점에 대해서 어느 시그마대수든 모두 filtration하다고 할 수 있다. 결과적으로 arm에 대한 reward $Y_t=<X_t,\Theta_*>+\eta_t$는 Ft-measuarble하다고 할 수 있다. 이 논리에 대해서 \eta_tX_t의 합인 sequence 또한 마팅게일을 따름으로써 특정 시점의 linear reward의 coefficient인 \Theta_*를 위한 신뢰구간을 추정할 수 있게 된다.
+
+### 3.3.3. Result
+
+Self-Normalized 
+
+
+
+
+
+
+
