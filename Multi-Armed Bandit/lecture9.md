@@ -263,7 +263,13 @@ https://www.youtube.com/watch?v=Zj4ZW3VtsFc&t=781s
 
 ### 3.3.3. Result
 
-Self-Normalized 
+Confidence Set 추정을 위해 중요한 아래의 방법론을 살펴보자
+
+* Theorem 1. Self-Normalized Bound for Vector-Valued Martingales
+
+    $\{\mathcal{F}_t\}^\infty_t$를 filtration
+
+    $\{\eta_t\}^\infty_t=0$를 $\mathcal{F_t}$에 측정가능하고 conditionally R-sub-Gaussian(R>0)을 따르는 stochastic process라고 하자.
 
 
 
